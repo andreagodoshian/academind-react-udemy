@@ -1,25 +1,6 @@
+import { MongoClient } from 'mongodb'; // depending on where you use it, won't be visible (security)
 import MeetupList from '../components/meetups/MeetupList';
 
-const DUMMY_MEETUPS = [
-  {
-    id: 'm1',
-    title: 'A First Meetup',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg',
-    address: 'Some address 5, 12345 Some City',
-    description: 'This is a first meetup!',
-  },
-  {
-    id: 'm2',
-    title: 'A Second Meetup',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg',
-    address: 'Some address 10, 12345 Some City',
-    description: 'This is a second meetup!',
-  },
-];
-
-// remember: hooks need to be inside (unless custom)
 function HomePage(props) {
   return <MeetupList meetups={props.meetups} />;
 }
@@ -27,14 +8,28 @@ function HomePage(props) {
 // better for loading and SEO - speed due to cache
 export async function getStaticProps() {
   // ^^reserved name - NextJS is programmed to call first
+  const client = await MongoClient.connect('mongodb+srv://root:_____@cluster0.gdywmwe.mongodb.net/meetups?retryWrites=true&w=majority');
+  const db = client.db();
+  const meetupsCollection = db.collection('meetups');
+
+  const meetups = await meetupsCollection.find().toArray();
+
+  client.close();
+
   return {
-    props: { // props - reserved/required
-      meetups: DUMMY_MEETUPS
+    props: {
+      meetups: meetups.map((meetup) => ({
+        title: meetup.title,
+        address: meetup.address,
+        image: meetup.image,
+        id: meetup._id.toString(),
+      })),
     },
-    revalidate: 10 // seconds 
-    // ^^after npm build/deploy, how regenerate?
-  }; 
+    revalidate: 1,
+  };
 }
+
+export default HomePage;
 
 /*
 // another pre-load & SEO - but can be bulky
@@ -50,5 +45,3 @@ export async function getServerSideProps(context) {
   } // no "revalidate" - runs for EVERY request
 }
 */
-
-export default HomePage;

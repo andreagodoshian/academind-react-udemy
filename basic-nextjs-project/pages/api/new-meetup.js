@@ -9,20 +9,24 @@ import {MongoClient} from "mongodb" // npm install mongodb
 // async because "connect" returns a promise
 // (OF COURSE IT DOES *eye roll*)
 async function handler(req, res) {
-    if (req.method === "POST") {
-        const data = req.body
-
-        const client = await MongoClient.connect("mongodb+srv://root:___________@cluster0.gdywmwe.mongodb.net/meetups?retryWrites=true&w=majority");
-        const db = client.db();
-        const meetupsCollection = db.collection("meetups");
-        const result = await meetupsCollection.insertOne(data);
-        console.log(result);
-
-        client.close();
-
-        res.status(201).json({message: "Meeting added."});
+    if (req.method === 'POST') {
+      const data = req.body;
+  
+      const client = await MongoClient.connect(
+        'mongodb+srv://root:_____@cluster0.gdywmwe.mongodb.net/meetups?retryWrites=true&w=majority'
+      );
+      const db = client.db();
+  
+      const meetupsCollection = db.collection('meetups');
+  
+      const result = await meetupsCollection.insertOne(data);
+  
+      console.log(result);
+  
+      client.close();
+  
+      res.status(201).json({ message: 'Meetup inserted!' });
     }
-
-}
-
-export default handler;
+  }
+  
+  export default handler;
