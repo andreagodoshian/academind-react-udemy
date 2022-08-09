@@ -1,8 +1,21 @@
+import React from 'react';
 import { MongoClient } from 'mongodb'; // depending on where you use it, won't be visible (security)
 import MeetupList from '../components/meetups/MeetupList';
+import Head from 'next/head';
 
 function HomePage(props) {
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <React.Fragment>
+      <Head>
+        <title>React Meetups</title>
+        <meta
+          name='description' // goood for SEO
+          content='Browse a huge list of highly active React meetups!'
+        />
+      </Head>
+      <MeetupList meetups={props.meetups} />;
+    </React.Fragment>
+  );
 }
 
 // better for loading and SEO - speed due to cache

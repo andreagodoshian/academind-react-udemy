@@ -1,3 +1,5 @@
+import {Fragment} from "react";
+import Head from 'next/head';
 import {MongoClient, ObjectId} from "mongodb";
 import MeetupDetail from '../../components/meetups/MeetupDetail';
 
@@ -8,19 +10,25 @@ import MeetupDetail from '../../components/meetups/MeetupDetail';
 */
 function MeetupDetails(props) {
   return (
-    <MeetupDetail
-      image={props.meetupData.image}
-      title={props.meetupData.title}
-      address={props.meetupData.address}
-      description={props.meetupData.description}
-    />
+    <Fragment>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name='description' content={props.meetupData.description} />
+      </Head>
+      <MeetupDetail
+        image={props.meetupData.image}
+        title={props.meetupData.title}
+        address={props.meetupData.address}
+        description={props.meetupData.description}
+      />
+    </Fragment>
   );
 }
 
 // also "reserved" - how else pre-generate paths???
 export async function getStaticPaths() {
     // ^^reserved name - NextJS is programmed to call first
-    const client = await MongoClient.connect('mongodb+srv://root:_______@cluster0.gdywmwe.mongodb.net/meetups?retryWrites=true&w=majority');
+    const client = await MongoClient.connect('mongodb+srv://root:_____@cluster0.gdywmwe.mongodb.net/meetups?retryWrites=true&w=majority');
     const db = client.db();
     const meetupsCollection = db.collection('meetups');
   
